@@ -7,6 +7,7 @@ from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 from geometry_msgs.msg import Quaternion
 from ackermann_msgs.msg import AckermannDriveStamped
+from std_msgs.msg import Bool
 
 from f1tenth_gym_ros.msg import RaceInfo
 
@@ -26,6 +27,7 @@ class GymBridge(object):
         self.opp_odom_topic = rospy.get_param('opp_odom_topic')
         self.ego_drive_topic = rospy.get_param('ego_drive_topic')
         self.race_info_topic = rospy.get_param('race_info_topic')
+        self.ego_reset_topic = rospy.get_param('ego_reset_topic')
 
         self.scan_distance_to_base_link = rospy.get_param('scan_distance_to_base_link')
 
@@ -86,6 +88,9 @@ class GymBridge(object):
         # subs
         self.drive_sub = rospy.Subscriber(self.ego_drive_topic, AckermannDriveStamped, self.drive_callback, queue_size=1)
 
+        # reset sub
+        self.reset_sub = rospy.Subscriber(self.ego_reset_topic, Bool, self.reset_callback, queue_size=1)
+
         # Timer
         self.timer = rospy.Timer(rospy.Duration(0.004), self.timer_callback)
 
@@ -118,6 +123,11 @@ class GymBridge(object):
         self.obs, step_reward, self.done, info = self.racecar_env.step(action)
 
         self.update_sim_state()
+
+    def reset_callback(self, data):
+        if(data.data):
+            initial_state = {'x':[0.0, 200.0], 'y': [0.0, 200.0], 'theta': [0.0, 0.0]}
+            self.racecar_env.reset(initial_state)
 
     def timer_callback(self, timer):
         ts = rospy.Time.now()
