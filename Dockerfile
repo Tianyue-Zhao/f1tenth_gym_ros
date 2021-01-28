@@ -1,10 +1,10 @@
-FROM ros:melodic-robot-bionic
+FROM ros:noetic-robot-focal
 
 ENV IM_IN_DOCKER Yes
 
 RUN apt-get update --fix-missing && \
     apt-get install -y \
-    python-pip
+    python3-pip
 
 RUN apt-get install -y libzmq3-dev \
                        git \
@@ -14,9 +14,9 @@ RUN apt-get install -y libzmq3-dev \
                        libeigen3-dev \
                        cmake \
                        vim \
-                       ros-melodic-ackermann-msgs \
-                       ros-melodic-map-server \
-                       ros-melodic-genpy
+                       ros-noetic-ackermann-msgs \
+                       ros-noetic-map-server \
+                       ros-noetic-genpy
 
 
 RUN cp -r /usr/include/eigen3/Eigen /usr/include
@@ -34,9 +34,9 @@ RUN git clone https://github.com/protocolbuffers/protobuf.git && \
     cd .. && \
     rm -r protobuf
 
-RUN pip install --upgrade pip
+RUN pip3 install --upgrade pip
 
-RUN pip install numpy==1.16.0 \
+RUN pip3 install numpy==1.16.0 \
                 scipy==1.2.0 \
                 zmq \
                 pyzmq \
@@ -60,15 +60,15 @@ RUN cd f1tenth_gym && \
 
 RUN cd f1tenth_gym && \
     cp ./build/sim_requests_pb2.py ./gym/ && \
-    pip install -e gym/
+    pip3 install -e gym/
 
-RUN /bin/bash -c "source /opt/ros/melodic/setup.bash; mkdir -p catkin_ws/src; cd catkin_ws; catkin_make"
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash; mkdir -p catkin_ws/src; cd catkin_ws; catkin_make"
 
 RUN mkdir /catkin_ws/src/f1tenth_gym_ros
 
 COPY . /catkin_ws/src/f1tenth_gym_ros
 
-RUN /bin/bash -c "source /opt/ros/melodic/setup.bash; cd catkin_ws; catkin_make; source devel/setup.bash"
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash; cd catkin_ws; catkin_make; source devel/setup.bash"
 
 
 CMD ["/catkin_ws/src/f1tenth_gym_ros/start.sh"]
