@@ -36,16 +36,16 @@ RUN git clone https://github.com/protocolbuffers/protobuf.git && \
 
 RUN pip3 install --upgrade pip
 
-RUN pip3 install numpy==1.16.0 \
-                scipy==1.2.0 \
+RUN pip3 install numpy==1.17.4 \
+                scipy==1.6.0 \
                 zmq \
                 pyzmq \
                 Pillow \
                 gym \
                 protobuf==3.8.0 \
                 pyyaml \
-                llvmlite==0.31.0 \
-                numba==0.47.0
+                llvmlite==0.35.0 \
+                numba==0.52.0
 
 
 # RUN git clone https://github.com/f1tenth/f1tenth_gym
